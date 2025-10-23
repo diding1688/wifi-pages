@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi-Fi 一键连接</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "PingFang SC", sans-serif;
+    background: linear-gradient(135deg, #0093E9 0%, #80D0C7 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: #fff;
+    text-align: center;
+  }
+  .card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    padding: 24px 28px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    width: 85%;
+    max-width: 360px;
+  }
+  h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+  }
+  .wifi-info {
+    font-size: 16px;
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+  button {
+    background: #fff;
+    color: #0093E9;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  button:hover {
+    background: #e6f4ff;
+  }
+  #qrcode {
+    margin: 20px auto;
+  }
+  footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: 12px;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2>📶 一键连接 Wi-Fi</h2>
+    <div class="wifi-info" id="wifiText"></div>
+    <div id="qrcode"></div>
+    <button id="actionBtn">复制 Wi-Fi 密码</button>
+  </div>
+  <footer>© 帝鼎智能 Wi-Fi · 触碰即连</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script>
+  // Wi-Fi 信息（自行修改）
+  const SSID = "米咔网供5G";
+  const PWD = "13833076661";
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const wifiText = document.getElementById("wifiText");
+  const qrcodeDiv = document.getElementById("qrcode");
+  const actionBtn = document.getElementById("actionBtn");
+
+  if (isIOS) {
+    wifiText.innerHTML = `
+      Wi-Fi 名称：<b>${SSID}</b><br>
+      密码：<b>${PWD}</b><br><br>
+      欢迎使用帝鼎智能卡片<br>
+      复制密码 打开WIFI连接
+    `;
+    new QRCode(qrcodeDiv, {
+      text: `WIFI:T:WPA;S:${SSID};P:${PWD};;`,
+      width: 160,
+      height: 160,
+      colorDark : "#ffffff",
+      colorLight : "transparent",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+  } else {
+    wifiText.innerHTML = `
+      Wi-Fi 名称：<b>${SSID}</b><br>
+      密码：<b>${PWD}</b><br><br>
+      欢迎使用帝鼎智能卡片<br>
+      复制密码 打开WIFI连接
+    `;
+  }
+
+  // 通用复制逻辑
+  actionBtn.onclick = () => {
+    navigator.clipboard.writeText(PWD).then(() => {
+      actionBtn.textContent = "✅ 已复制";
+      setTimeout(() => actionBtn.textContent = "复制 Wi-Fi 密码", 2000);
+    }).catch(() => {
+      alert("复制失败，请手动记下密码：" + PWD);
+    });
+  };
+</script>
+</body>
+</html>
