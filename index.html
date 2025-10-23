@@ -70,7 +70,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 <script>
-  // Wi-Fi 信息（自行修改）
+  // 固定账号密码
   const SSID = "yu123456789";
   const PWD = "123456789";
 
@@ -79,13 +79,16 @@
   const qrcodeDiv = document.getElementById("qrcode");
   const actionBtn = document.getElementById("actionBtn");
 
+  // 设置显示文本
+  wifiText.innerHTML = `
+    Wi-Fi 名称：<b>${SSID}</b><br>
+    密码：<b>${PWD}</b><br><br>
+    欢迎使用帝鼎智能卡片<br>
+    复制密码 打开WIFI连接
+  `;
+
+  // iOS 显示二维码，安卓隐藏
   if (isIOS) {
-    wifiText.innerHTML = `
-      Wi-Fi 名称：<b>${SSID}</b><br>
-      密码：<b>${PWD}</b><br><br>
-      📱 用相机扫描下方二维码即可加入网络<br>
-      或点击下方按钮复制密码
-    `;
     new QRCode(qrcodeDiv, {
       text: `WIFI:T:WPA;S:${SSID};P:${PWD};;`,
       width: 160,
@@ -95,12 +98,7 @@
       correctLevel : QRCode.CorrectLevel.H
     });
   } else {
-    wifiText.innerHTML = `
-      Wi-Fi 名称：<b>${SSID}</b><br>
-      密码：<b>${PWD}</b><br><br>
-      🤖 手机背面碰 NFC 卡即可弹出连接提示<br>
-      或点击下方按钮复制密码
-    `;
+    qrcodeDiv.style.display = "none";
   }
 
   // 通用复制逻辑
