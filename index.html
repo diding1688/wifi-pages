@@ -64,7 +64,7 @@
     <h2>📶 一键连接 Wi-Fi</h2>
     <div class="wifi-info" id="wifiText"></div>
     <div id="qrcode"></div>
-    <button id="copyBtn">复制 Wi-Fi 密码</button>
+    <button id="actionBtn">连接 Wi-Fi</button>
   </div>
   <footer>© 帝鼎智能 Wi-Fi · 触碰即连</footer>
 
@@ -72,16 +72,13 @@
 <script>
   const SSID = "yu123456789";
   const PWD = "123456789";
-
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIOS = /iphone|ipad|ipod/.test(userAgent);
-
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const wifiText = document.getElementById("wifiText");
   const qrcodeDiv = document.getElementById("qrcode");
-  const copyBtn = document.getElementById("copyBtn");
+  const actionBtn = document.getElementById("actionBtn");
 
   if (isIOS) {
-    wifiText.innerHTML = `Wi-Fi 名称：<b>${SSID}</b><br>密码：<b>${PWD}</b><br><br>📱 请扫描下方二维码一键连接`;
+    wifiText.innerHTML = `Wi-Fi 名称：<b>${SSID}</b><br>密码：<b>${PWD}</b><br><br>📱 点击下方按钮将自动复制密码并跳转到设置页面`;
     new QRCode(qrcodeDiv, {
       text: `WIFI:T:WPA;S:${SSID};P:${PWD};;`,
       width: 160,
@@ -90,17 +87,29 @@
       colorLight : "transparent",
       correctLevel : QRCode.CorrectLevel.H
     });
+    actionBtn.onclick = () => {
+      navigator.clipboard.writeText(PWD).then(() => {
+        actionBtn.textContent = "✅ 密码已复制，正在跳转...";
+        setTimeout(() => {
+          // 跳转 Wi-Fi 设置
+          window.location.href = "App-Prefs:root=WIFI";
+          setTimeout(() => {
+            window.location.href = "prefs:root=WIFI";
+          }, 500);
+        }, 1000);
+      });
+    };
   } else {
     wifiText.innerHTML = `Wi-Fi 名称：<b>${SSID}</b><br>密码：<b>${PWD}</b><br><br>🤖 请直接用手机背面碰 NFC 卡，即可弹出连接提示`;
     qrcodeDiv.style.display = "none";
+    actionBtn.textContent = "复制 Wi-Fi 密码";
+    actionBtn.onclick = () => {
+      navigator.clipboard.writeText(PWD).then(() => {
+        actionBtn.textContent = "✅ 已复制";
+        setTimeout(() => actionBtn.textContent = "复制 Wi-Fi 密码", 2000);
+      });
+    };
   }
-
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(PWD).then(() => {
-      copyBtn.textContent = "✅ 已复制";
-      setTimeout(() => copyBtn.textContent = "复制 Wi-Fi 密码", 2000);
-    });
-  };
 </script>
 </body>
 </html>
